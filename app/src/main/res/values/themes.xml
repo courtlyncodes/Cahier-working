@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.Cahier" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
+        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+
+    <style name="Theme.Cahier.Splash" parent="NightAdjusted.Theme.Splash">
+        <item name="windowSplashScreenBackground">#FFD3D3D3</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/sample_splash_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cahier</item>
+    </style>
 </resources>
