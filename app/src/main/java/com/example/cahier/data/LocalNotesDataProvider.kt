@@ -1,6 +1,5 @@
 package com.example.cahier.data
 
-import org.threeten.bp.LocalDate
 object LocalNotesDataProvider {
     val allNotes = listOf (
         Note(
@@ -26,6 +25,18 @@ object LocalNotesDataProvider {
         Note(
             title = "Note 6",
             date = "September 16, 2020"
+        ),
+        Note(
+            title = "Note 7",
+            date = "December 29, 2020"
+        ),
+        Note(
+            title = "Note 8",
+            date = "March 12, 2021"
+        ),
+        Note(
+            title = "Note 9",
+            date = "July 31, 2021"
         )
     )
 }
