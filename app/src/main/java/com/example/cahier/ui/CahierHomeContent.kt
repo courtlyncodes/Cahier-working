@@ -1,5 +1,7 @@
 package com.example.cahier.ui
 
+import android.icu.text.SimpleDateFormat
+import android.text.format.DateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +29,9 @@ import com.example.cahier.R
 import com.example.cahier.data.LocalNotesDataProvider
 import com.example.cahier.data.Note
 import com.example.cahier.ui.theme.CahierTheme
+import java.text.DateFormat.getDateInstance
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @Composable
 fun CahierList(
@@ -35,7 +41,7 @@ fun CahierList(
     Scaffold(
         floatingActionButton = {
             LargeFloatingActionButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Filled.Create, "large floating action button.")
+                Icon(Icons.Filled.Add, "large floating action button")
             }
         }
     ) { innerPadding ->
@@ -56,6 +62,9 @@ fun CahierNoteListItem(
     note: Note,
     modifier: Modifier = Modifier
 ) {
+    val date = note.date
+    val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+    val formattedDate = date.format(formatter)
     OutlinedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(Color.White),
@@ -71,7 +80,7 @@ fun CahierNoteListItem(
         )
         Column(modifier.padding(16.dp)) {
             Text(note.title)
-            Text(note.date)
+            Text(formattedDate.toString())
         }
     }
 }

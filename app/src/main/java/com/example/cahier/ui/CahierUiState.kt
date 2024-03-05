@@ -1,8 +1,12 @@
 package com.example.cahier.ui
 
-import android.provider.ContactsContract.CommonDataKinds.Note
+import org.threeten.bp.LocalDate
+import java.util.Date
+
 
 class CahierUiState (
-    val note: Note,
-    val notes: List<Note> = emptyList()
+
+    val title: String,
+    val date: LocalDate
+
 )

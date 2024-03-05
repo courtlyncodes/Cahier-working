@@ -1,42 +1,45 @@
 package com.example.cahier.data
 
+import java.time.LocalDate
+
+
 object LocalNotesDataProvider {
     val allNotes = listOf (
         Note(
             title = "Note 1",
-            date = "June 15, 2020"
+            date = LocalDate.of(2020, 6, 15)
         ),
         Note(
             title = "Note 2",
-            date = "August 1, 2020"
+            date = LocalDate.of(2020, 8,  1)
         ),
         Note(
             title = "Note 3",
-            date = "August 7, 2020"
+            date = LocalDate.of(2020, 8, 7)
         ),
         Note(
             title = "Note 4",
-            date = "August 19, 2020"
+            date = LocalDate.of(2020, 8, 19)
         ),
         Note(
             title = "Note 5",
-            date = "August 28, 2020"
+            date = LocalDate.of(2020, 8, 28)
         ),
         Note(
             title = "Note 6",
-            date = "September 16, 2020"
+            date = LocalDate.of(2020, 8, 16)
         ),
         Note(
             title = "Note 7",
-            date = "December 29, 2020"
+            date = LocalDate.of(2020, 12, 30)
         ),
         Note(
             title = "Note 8",
-            date = "March 12, 2021"
+            date = LocalDate.of(2021, 3, 12)
         ),
         Note(
             title = "Note 9",
-            date = "July 31, 2021"
+            date = LocalDate.of(2021, 7, 31)
         )
     )
 }
