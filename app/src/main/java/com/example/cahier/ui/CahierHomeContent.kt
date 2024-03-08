@@ -1,7 +1,5 @@
 package com.example.cahier.ui
 
-import android.icu.text.SimpleDateFormat
-import android.text.format.DateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
@@ -20,38 +17,40 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
-import com.example.cahier.data.LocalNotesDataProvider
 import com.example.cahier.data.Note
 import com.example.cahier.ui.theme.CahierTheme
-import java.text.DateFormat.getDateInstance
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 
 @Composable
 fun CahierList(
-    notes: List<Note>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CahierViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         floatingActionButton = {
             LargeFloatingActionButton(onClick = { /*TODO*/ }) {
                 Icon(Icons.Filled.Add, "large floating action button")
             }
-        }
+        },
+        modifier = modifier
     ) { innerPadding ->
         LazyVerticalGrid(
             columns = GridCells.Adaptive(184.dp),
-            modifier.padding(innerPadding)
+            Modifier.padding(innerPadding)
         )
         {
-            items(notes.size) { note ->
-                CahierNoteListItem(note = notes[note])
+            items(uiState.notesCount) { note ->
+                CahierNoteListItem(note = uiState.notes[note])
             }
         }
     }
@@ -63,7 +62,7 @@ fun CahierNoteListItem(
     modifier: Modifier = Modifier
 ) {
     val date = note.date
-    val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+    val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
     val formattedDate = date.format(formatter)
     OutlinedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -90,6 +89,6 @@ fun CahierNoteListItem(
 @Composable
 fun CahierHomeContentPreview() {
     CahierTheme {
-        CahierList(notes = LocalNotesDataProvider.allNotes)
+        CahierList()
     }
 }
