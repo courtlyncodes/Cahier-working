@@ -8,47 +8,101 @@ object LocalNotesDataProvider {
         Note(
             id =  1,
             title = "Note 1",
-            date = LocalDate.of(2020, 6, 15)
+            lastModified = LocalDate.of(2020, 6, 15),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  2,
             title = "Note 2",
-            date = LocalDate.of(2020, 8,  1)
+            lastModified = LocalDate.of(2020, 8,  1),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  3,
             title = "Note 3",
-            date = LocalDate.of(2020, 8, 7)
+            lastModified = LocalDate.of(2020, 8, 7),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  4,
             title = "Note 4",
-            date = LocalDate.of(2020, 8, 19)
+            lastModified = LocalDate.of(2020, 8, 19),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  5,
             title = "Note 5",
-            date = LocalDate.of(2020, 8, 28)
+            lastModified = LocalDate.of(2020, 8, 28),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  6,
             title = "Note 6",
-            date = LocalDate.of(2020, 8, 16)
+            lastModified = LocalDate.of(2020, 8, 16),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  7,
             title = "Note 7",
-            date = LocalDate.of(2020, 12, 30)
+            lastModified = LocalDate.of(2020, 12, 30),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  8,
             title = "Note 8",
-            date = LocalDate.of(2021, 3, 12)
+            lastModified = LocalDate.of(2021, 3, 12),
+            tags = mutableListOf("groceries", "shopping"),
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         ),
         Note(
             id =  9,
             title = "Note 9",
-            date = LocalDate.of(2021, 7, 31)
+            lastModified = LocalDate.of(2021, 7, 31),
+            tags = null,
+            text = null,
+            image = null,
+            list = null,
+            sketch = null,
+            calendarDate = null,
         )
     )
 }
