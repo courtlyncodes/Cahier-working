@@ -7,6 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.cahier.data.LocalNotesDataProvider
+import com.example.cahier.ui.ListDetailPaneScaffoldScreen
+import com.example.cahier.ui.NavigationSuiteHomePane
+//import com.example.cahier.ui.ListDetailPaneScaffoldScreen
+//import com.example.cahier.ui.NavigationSuiteHomePane
+import com.example.cahier.ui.NoteDetail
 import com.example.cahier.ui.PracticeCanvas
 import com.example.cahier.ui.theme.CahierTheme
 
@@ -22,7 +28,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PracticeCanvas()
+                    val note = LocalNotesDataProvider.allNotes.first()
+                   ListDetailPaneScaffoldScreen({}, {})
                 }
             }
         }

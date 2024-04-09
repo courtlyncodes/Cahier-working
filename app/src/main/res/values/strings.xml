@@ -3,4 +3,5 @@
     <string name="floating_action_button_des">add new note</string>
     <string name="date_pattern">MM-dd-YYYY</string>
     <string name="all_notes">All Notes</string>
+    <string name="done">Done</string>
 </resources>

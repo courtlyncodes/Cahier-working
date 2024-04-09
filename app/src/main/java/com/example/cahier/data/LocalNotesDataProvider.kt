@@ -1,5 +1,6 @@
 package com.example.cahier.data
 
+import com.example.cahier.R
 import java.time.LocalDate
 
 
@@ -10,8 +11,8 @@ object LocalNotesDataProvider {
             title = "Note 1",
             lastModified = LocalDate.of(2020, 6, 15),
             tags = null,
-            text = null,
-            image = null,
+            text = "I am the one who knocks.",
+            image = R.mipmap.knocks,
             list = null,
             sketch = null,
             calendarDate = null,
