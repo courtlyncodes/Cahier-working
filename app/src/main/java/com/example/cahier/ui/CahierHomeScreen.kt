@@ -66,12 +66,14 @@ fun CahierList(
         )
         {
             items(uiState.notesCount) { note ->
-                NoteItem(note = uiState.notes[note], onClick = onClick )
+                NoteItem(note = uiState.notes[note], onClick = onClick)
             }
         }
     }
 }
 
+
+//forget the drawer!
 
 @OptIn(
     ExperimentalMaterial3AdaptiveNavigationSuiteApi::class,
@@ -163,11 +165,14 @@ fun ListDetailPaneScaffoldScreen(
         mutableStateOf(null)
     }
 
+    //value for currently displayed note id set to null by default
+    //use state to store the id of the currently displayed note
     val note = LocalNotesDataProvider.allNotes.first()
 
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
-    var clicked by remember { mutableStateOf(false) }
+
+    var currentDetailScreen by rememberSaveable { mutableStateOf(DetailScreen.NoteDetail) }
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
@@ -178,27 +183,41 @@ fun ListDetailPaneScaffoldScreen(
         listPane = {
             CahierList(
                 onClick = {
-                          selectedItem = note
+                    selectedItem = note
+                    currentDetailScreen = DetailScreen.NoteDetail
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                 },
-                onButtonClick = { navigator.navigateTo(ListDetailPaneScaffoldRole.Extra) },
+                onButtonClick = {
+                    currentDetailScreen = DetailScreen.Canvas
+                    navigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
+                },
                 viewModel = viewModel
             )
-
         },
         detailPane = {
-//            if (clicked) {
-            selectedItem?.let { note ->
-                NoteDetail(note)
-                navigator.navigateTo(ListDetailPaneScaffoldRole.List)
+            when (currentDetailScreen) {
+                DetailScreen.NoteDetail -> {
+                    selectedItem?.let { note ->
+                        NoteDetail(note)
+                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                    }
+                }
+                DetailScreen.Canvas -> CahierNavHost()
             }
+        })
+//            if (clicked) {
+
 //            } else {
 //                CahierNavHost()
-//            }
-        },
-        extraPane = {
-           CahierNavHost()
-            navigator.navigateTo(ListDetailPaneScaffoldRole.List)
-        }
-    )
 }
+//Get rid of extra pane should be a supportive pane
+
+
+enum class DetailScreen {
+    NoteDetail,
+    Canvas
+}
+
+//back stack enry for compact screen to show list during config change
+//currently selected item to represent list or detail
+//if type is __ share this if
