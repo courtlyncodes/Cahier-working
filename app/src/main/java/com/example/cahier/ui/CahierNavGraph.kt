@@ -26,9 +26,7 @@ fun CahierNavHost(
 ) {
     val startDestination: String = CahierNavGraph.CANVAS.name
 
-    Scaffold(
-        topBar = { CahierTopAppBar() }
-    ) { it ->
+    Scaffold() { it ->
         NavHost(
             navController = navController,
             startDestination = startDestination,

@@ -28,6 +28,7 @@ fun PracticeCanvas(
     Canvas(modifier = Modifier
         .fillMaxSize()
         .pointerInput(key1 = Unit) {
+            // make this go directly to edit
             detectTapGestures {
                 isTextFieldVisible = true
             }

@@ -1,6 +1,7 @@
 package com.example.cahier.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 //import androidx.compose.material3.adaptive.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -27,8 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,9 +40,9 @@ import com.example.cahier.data.Note
 
 @Composable
 fun CahierList(
-    modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
-    onClick: () -> Unit,
+    onItemClick: (Note) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: CahierViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -66,7 +64,10 @@ fun CahierList(
         )
         {
             items(uiState.notesCount) { note ->
-                NoteItem(note = uiState.notes[note], onClick = onClick)
+                NoteItem(
+                    note = uiState.notes[note],
+                    onClick = onItemClick
+                )
             }
         }
     }
@@ -81,7 +82,7 @@ fun CahierList(
 )
 @Composable
 fun NavigationSuiteHomePane(
-    onItemClick: () -> Unit,
+    onItemClick: (Note) -> Unit,
     onButtonClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: CahierViewModel = viewModel()
@@ -90,14 +91,6 @@ fun NavigationSuiteHomePane(
     var selectedItem by rememberSaveable { mutableIntStateOf(0) }
     val navItems = listOf("Write", "Text", "Photo")
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val customNavSuiteType = with(adaptiveInfo) {
-        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
-            NavigationSuiteType.NavigationDrawer
-        } else {
-            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
-        }
-    }
-
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
@@ -109,8 +102,7 @@ fun NavigationSuiteHomePane(
                     onClick = { selectedItem = index }
                 )
             }
-        },
-        layoutType = customNavSuiteType
+        }
     ) {
         Scaffold(
             topBar = {
@@ -124,8 +116,8 @@ fun NavigationSuiteHomePane(
             modifier = modifier
         ) { innerPadding ->
             ListDetailPaneScaffoldScreen(
-                onClick = { /*TODO*/ },
-                onButtonClick = { /*TODO*/ },
+//                onClick = { /*TODO*/ },
+//                onButtonClick = { /*TODO*/ },
                 modifier = Modifier.padding(innerPadding)
             )
 //            LazyVerticalGrid(
@@ -151,28 +143,39 @@ fun NavigationSuiteHomePane(
 //    }
 //}
 
+//@Composable
+//fun ListAndDetailScreen(
+//    viewModel: CahierViewModel = viewModel()
+//
+//){
+//    val uiState by viewModel.uiState.collectAsState()
+//      CahierList(onButtonClick = {}, onItemClick = {viewModel.updateNote(it)})
+//    uiState.note?.let { NoteDetail(it) }
+//
+//
+//}
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun ListDetailPaneScaffoldScreen(
-    onClick: () -> Unit,
-    onButtonClick: () -> Unit,
+//    onClick: () -> Unit,
+//    onButtonClick: () -> Unit,
     viewModel: CahierViewModel = viewModel(),
     canvasViewModel: CanvasViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    var selectedItem: Note? by rememberSaveable(stateSaver = Note.Saver) {
-        mutableStateOf(null)
-    }
+//    var selectedItem: Note? by rememberSaveable(stateSaver = Note.Saver) {
+//        mutableStateOf(null)
+//    }
 
     //value for currently displayed note id set to null by default
     //use state to store the id of the currently displayed note
-    val note = LocalNotesDataProvider.allNotes.first()
+//    val note = LocalNotesDataProvider.allNotes.first()
 
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
-
-    var currentDetailScreen by rememberSaveable { mutableStateOf(DetailScreen.NoteDetail) }
+    val uiState by viewModel.uiState.collectAsState()
+    var currentDetailScreen by rememberSaveable { mutableStateOf(DetailScreen.NoteDetail)  }
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
@@ -182,14 +185,19 @@ fun ListDetailPaneScaffoldScreen(
         value = navigator.scaffoldValue,
         listPane = {
             CahierList(
-                onClick = {
-                    selectedItem = note
-                    currentDetailScreen = DetailScreen.NoteDetail
+                onItemClick = {
+//                    selectedItem = note
+                    viewModel.updateNote(it)
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                    currentDetailScreen = DetailScreen.NoteDetail
+//
+
                 },
                 onButtonClick = {
+
+
+                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                     currentDetailScreen = DetailScreen.Canvas
-                    navigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
                 },
                 viewModel = viewModel
             )
@@ -197,14 +205,29 @@ fun ListDetailPaneScaffoldScreen(
         detailPane = {
             when (currentDetailScreen) {
                 DetailScreen.NoteDetail -> {
-                    selectedItem?.let { note ->
-                        NoteDetail(note)
-                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
-                    }
+                    uiState.note?.let { NoteDetail(it) }
                 }
-                DetailScreen.Canvas -> CahierNavHost()
+                DetailScreen.Canvas -> {
+                    CahierNavHost()
+                }
+//
+//            when (currentDetailScreen) {
+//                DetailScreen.NoteDetail -> { NoteDetail(note) }
+////                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
+//
+//
+//                DetailScreen.Canvas -> {
+////                    selectedItem = null
+//                    CahierNavHost()
+////                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
+//
+//                }
+//
+//                null -> navigator.navigateTo(ListDetailPaneScaffoldRole.List)
             }
-        })
+        }
+    )
+
 //            if (clicked) {
 
 //            } else {

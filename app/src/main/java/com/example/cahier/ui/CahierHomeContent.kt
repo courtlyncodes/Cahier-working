@@ -58,7 +58,7 @@ fun NoteDetail(
 
 @Composable
 fun NoteItem(
-    onClick: () -> Unit,
+    onClick: (Note) -> Unit,
     note: Note,
     modifier: Modifier = Modifier
 ) {
@@ -71,7 +71,7 @@ fun NoteItem(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .padding(6.dp)
-            .clickable(onClick = onClick)
+            .clickable { onClick(note) }
     ) {
         Image(
             painterResource(R.drawable.media),

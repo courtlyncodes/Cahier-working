@@ -30,7 +30,7 @@ object LocalNotesDataProvider {
         ),
         Note(
             id =  3,
-            title = "Note 3",
+            title = "Stay out of my territory.",
             lastModified = LocalDate.of(2020, 8, 7),
             tags = null,
             text = null,
