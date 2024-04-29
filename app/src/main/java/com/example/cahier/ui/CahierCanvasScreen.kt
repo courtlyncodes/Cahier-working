@@ -1,9 +1,15 @@
 package com.example.cahier.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -13,43 +19,78 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cahier.ui.theme.CahierTheme
+import com.example.cahier.R
+import com.example.cahier.data.CanvasUiState
+import com.example.cahier.data.Note
 
 @Composable
 fun PracticeCanvas(
-    viewModel: CanvasViewModel = viewModel()
+    note: Note,
+    onValueChange: (Note) -> Unit = {},
+    onNavigateUp: (Note) -> Unit,
+    viewModel: CanvasViewModel = viewModel(),
+    newViewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isTextFieldVisible by remember { mutableStateOf(false) }
 
-    Canvas(modifier = Modifier
+    BackHandler(enabled = true) {
+       onNavigateUp(note)
+    }
+
+    Canvas(modifier = modifier
         .fillMaxSize()
         .pointerInput(key1 = Unit) {
-            // make this go directly to edit
             detectTapGestures {
                 isTextFieldVisible = true
             }
         }
-//        .pointerInput(key1 = Unit) {
-//            detectDragGestures{
-//            }
-//        }
     ) {
     }
-
     if (isTextFieldVisible) {
-        TextField(
-            value = uiState.text,
-            onValueChange = { viewModel.updateText(it) },
-            modifier = Modifier
-                .fillMaxSize()
-        )
-    }
+        Column {
+            TextField(
+                value = note.title,
+                placeholder = { Text(stringResource(R.string.title)) },
+                onValueChange = {
+                    onValueChange(note.copy(title = it))
 
+                },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = true,
+                    shouldShowKeyboardOnFocus = true
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            note.text?.let {
+                TextField(
+                    value = it,
+                    placeholder = { Text(stringResource(R.string.note)) },
+                    onValueChange = { onValueChange(note.copy(text = it)) },
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = true,
+                        shouldShowKeyboardOnFocus = true
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+        }
+    }
 }
+
+
+@Composable
+fun CanvasWrapper(canvasUiState: CanvasUiState, onValueChange: (Note) -> Unit, onNavigateUp: (Note) -> Unit) {
+    Scaffold() {
+        PracticeCanvas(note = canvasUiState.note, onValueChange = onValueChange, onNavigateUp = onNavigateUp, modifier = Modifier.padding(it))
+    }
+}
+
+
 //
 //    Canvas(modifier = Modifier
 //        .fillMaxSize()
@@ -98,4 +139,4 @@ fun PracticeCanvas(
 //        PracticeCanvas()
 //    }
 //}
-//
+

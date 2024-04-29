@@ -3,19 +3,28 @@ package com.example.cahier.data
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.time.LocalDate
 
-
+@Entity(tableName = "notes")
 data class Note(
-    val id: Int?,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+    @ColumnInfo(name = "title")
     val title: String,
-    val lastModified: LocalDate,
-    val tags: List<String>?,
+//    @ColumnInfo(name = "last_modified")
+//    val lastModified: LocalDate = LocalDate.now(),
+//    val tags: List<String>?,
+    @ColumnInfo(name = "text")
     val text: String?,
-    @DrawableRes val image: Int?,/*(int?, url? ImageVector?)*/
-    val list: List<Any>?,
-    val sketch: Painter?,
-    val calendarDate: LocalDate?
+    @ColumnInfo(name = "image")
+    /*@DrawableRes */val image: Int?,
+//    val list: List<Any>? = null,
+//    val sketch: Painter? = null,
+//    @ColumnInfo(name = "calendar_date")
+//    val calendarDate: LocalDate? = null
 )
 //{
 //    companion object {

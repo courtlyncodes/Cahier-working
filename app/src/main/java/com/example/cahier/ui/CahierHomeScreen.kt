@@ -1,52 +1,52 @@
 package com.example.cahier.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-//import androidx.compose.material3.adaptive.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.cahier.R
-import com.example.cahier.data.LocalNotesDataProvider
 import com.example.cahier.data.Note
+import kotlinx.coroutines.launch
 
 @Composable
 fun CahierList(
     onButtonClick: () -> Unit,
     onItemClick: (Note) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CahierViewModel = viewModel()
+    viewModel: NoteViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val note = uiState.notes
+    val homeUiState by homeViewModel.homeUiState.collectAsState()
     Scaffold(
         topBar = {
             CahierTopAppBar()
@@ -63,9 +63,9 @@ fun CahierList(
             Modifier.padding(innerPadding)
         )
         {
-            items(uiState.notesCount) { note ->
+            items(homeUiState.noteList.size) {  note ->
                 NoteItem(
-                    note = uiState.notes[note],
+                    note = homeUiState.noteList[note],
                     onClick = onItemClick
                 )
             }
@@ -73,174 +73,79 @@ fun CahierList(
     }
 }
 
-
-//forget the drawer!
-
-@OptIn(
-    ExperimentalMaterial3AdaptiveNavigationSuiteApi::class,
-    ExperimentalMaterial3AdaptiveApi::class
-)
-@Composable
-fun NavigationSuiteHomePane(
-    onItemClick: (Note) -> Unit,
-    onButtonClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
-    viewModel: CahierViewModel = viewModel()
+enum class AppDestinations(
+    @StringRes val label: Int,
+    val icon: ImageVector,
+    @StringRes val contentDescription: Int
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
-    val navItems = listOf("Write", "Text", "Photo")
-    val adaptiveInfo = currentWindowAdaptiveInfo()
+    HOME(label = R.string.home, icon = Icons.Filled.Home, contentDescription = R.string.home),
+    FAVORITES(label = R.string.favorites, icon = Icons.Filled.Favorite, contentDescription = R.string.favorites),
+    SETTINGS(label = R.string.settings, icon = Icons.Filled.Settings, contentDescription = R.string.settings),
+    TRASH(label = R.string.trash, icon = Icons.Filled.Delete, contentDescription = R.string.trash)
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
+@Composable
+fun NavigationSuiteHomeScreen(
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            navItems.forEachIndexed { index, navItem ->
+            AppDestinations.entries.forEach {
                 item(
-                    icon = { Icons.Outlined.CheckCircle },
-                    label = { Text(navItem) },
-                    selected = selectedItem == index,
-                    onClick = { selectedItem = index }
+                    icon = {
+                        Icon(
+                            it.icon,
+                            contentDescription = stringResource(it.contentDescription)
+                        )
+                    },
+                    label = { Text(stringResource(it.label)) },
+                    selected = currentDestination == it,
+                    onClick = { currentDestination = it }
                 )
             }
-        }
+        },
     ) {
-        Scaffold(
-            topBar = {
-                CahierTopAppBar()
-            },
-            floatingActionButton = {
-                LargeFloatingActionButton(onClick = onButtonClick) {
-                    Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
-                }
-            },
-            modifier = modifier
-        ) { innerPadding ->
-            ListDetailPaneScaffoldScreen(
-//                onClick = { /*TODO*/ },
-//                onButtonClick = { /*TODO*/ },
-                modifier = Modifier.padding(innerPadding)
-            )
-//            LazyVerticalGrid(
-//                columns = GridCells.Adaptive(184.dp),
-//                Modifier.padding(innerPadding)
-//            )
-//            {
-//                items(uiState.notesCount) { note ->
-//                    NoteItem(note = uiState.notes[note], onClick = onItemClick)
-//                }
-//            }
-        }
+        NoteListDetailScreen(onButtonClick = onButtonClick)
     }
 }
 
-//Should this go somewhere else?
-//class MyItem(val id: Int) {
-//    companion object {
-//        val Saver: Saver<MyItem?, Int> = Saver(
-//            { it?.id },
-//            ::MyItem,
-//        )
-//    }
-//}
-
-//@Composable
-//fun ListAndDetailScreen(
-//    viewModel: CahierViewModel = viewModel()
-//
-//){
-//    val uiState by viewModel.uiState.collectAsState()
-//      CahierList(onButtonClick = {}, onItemClick = {viewModel.updateNote(it)})
-//    uiState.note?.let { NoteDetail(it) }
-//
-//
-//}
-
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun ListDetailPaneScaffoldScreen(
-//    onClick: () -> Unit,
-//    onButtonClick: () -> Unit,
-    viewModel: CahierViewModel = viewModel(),
-    canvasViewModel: CanvasViewModel = viewModel(),
+fun NoteListDetailScreen(
+    onButtonClick: () -> Unit,
+    viewModel: NoteViewModel = viewModel(),
+    daoViewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
-//    var selectedItem: Note? by rememberSaveable(stateSaver = Note.Saver) {
-//        mutableStateOf(null)
-//    }
-
-    //value for currently displayed note id set to null by default
-    //use state to store the id of the currently displayed note
-//    val note = LocalNotesDataProvider.allNotes.first()
-
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-
     val uiState by viewModel.uiState.collectAsState()
-    var currentDetailScreen by rememberSaveable { mutableStateOf(DetailScreen.NoteDetail)  }
+//    var currentDetailScreen by rememberSaveable { mutableStateOf(DetailScreen.NOTE_DETAIL) }\
+
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
     }
+
     ListDetailPaneScaffold(
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
             CahierList(
                 onItemClick = {
-//                    selectedItem = note
-                    viewModel.updateNote(it)
+                    daoViewModel.updateUiState(it)
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                    currentDetailScreen = DetailScreen.NoteDetail
-//
-
+//                    currentDetailScreen = DetailScreen.NOTE_DETAIL
                 },
-                onButtonClick = {
-
-
-                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                    currentDetailScreen = DetailScreen.Canvas
-                },
+                onButtonClick = onButtonClick,
                 viewModel = viewModel
             )
         },
         detailPane = {
-            when (currentDetailScreen) {
-                DetailScreen.NoteDetail -> {
                     uiState.note?.let { NoteDetail(it) }
-                }
-                DetailScreen.Canvas -> {
-                    CahierNavHost()
-                }
-//
-//            when (currentDetailScreen) {
-//                DetailScreen.NoteDetail -> { NoteDetail(note) }
-////                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
-//
-//
-//                DetailScreen.Canvas -> {
-////                    selectedItem = null
-//                    CahierNavHost()
-////                        navigator.navigateTo(ListDetailPaneScaffoldRole.List)
-//
-//                }
-//
-//                null -> navigator.navigateTo(ListDetailPaneScaffoldRole.List)
             }
-        }
     )
-
-//            if (clicked) {
-
-//            } else {
-//                CahierNavHost()
 }
-//Get rid of extra pane should be a supportive pane
-
-
-enum class DetailScreen {
-    NoteDetail,
-    Canvas
-}
-
-//back stack enry for compact screen to show list during config change
-//currently selected item to represent list or detail
-//if type is __ share this if
