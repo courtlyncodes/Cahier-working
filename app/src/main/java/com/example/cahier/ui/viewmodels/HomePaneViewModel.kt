@@ -1,4 +1,4 @@
-package com.example.cahier.ui
+package com.example.cahier.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class HomeViewModel(notesRepository: NotesRepository) : ViewModel() {
+class HomePaneViewModel(notesRepository: NotesRepository) : ViewModel() {
 
     /**
-     * Holds home ui state. The list of items are retrieved from [ItemsRepository] and mapped to
-     * [HomeUiState]
+     * Holds home ui state. The list of items are retrieved from [NotesRepository] and mapped to
+     * [NoteUiState]
      */
-    val homeUiState: StateFlow<HomeUiState> =
-        notesRepository.getAllNotesStream().map { HomeUiState(it) }
+    val homeUiState: StateFlow<NoteUiState> =
+        notesRepository.getAllNotesStream().map { NoteUiState(it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = HomeUiState()
+                initialValue = NoteUiState()
             )
 
     companion object {
@@ -31,4 +31,4 @@ class HomeViewModel(notesRepository: NotesRepository) : ViewModel() {
 /**
  * Ui State for HomeScreen
  */
-data class HomeUiState(val noteList: List<Note> = listOf())
+data class NoteUiState(val noteList: List<Note> = listOf())

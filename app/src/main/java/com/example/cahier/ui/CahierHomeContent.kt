@@ -6,11 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -22,28 +29,61 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cahier.R
 import com.example.cahier.data.Note
-import java.time.format.DateTimeFormatter
+
+@Composable
+fun NoteList(
+    noteList: List<Note>,
+    onButtonClick: () -> Unit,
+    onItemClick: (Note) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(currentScreenName = stringResource(R.string.all_notes))
+        },
+        floatingActionButton = {
+            LargeFloatingActionButton(onClick = onButtonClick) {
+                Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
+            }
+        },
+        modifier = modifier
+    ) { innerPadding ->
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(184.dp),
+            Modifier.padding(innerPadding)
+        )
+        {
+            items(count = noteList.size, key = { it }) { note ->
+                NoteItem(
+                    note = noteList[note],
+                    onClick = onItemClick
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun NoteDetail(
     note: Note,
     modifier: Modifier = Modifier
 ) {
-   // val date = note.lastModified
-    val formatter = DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern))
-//    val formattedDate = date.format(formatter)
-
-    Column {
-//        Text(formattedDate)
-        Text(note.title)
-        note.text?.let { Text(it) }
-        note.image?.let { painterResource(it) }
-            ?.let {
-                Image(
-                    painter = it,
-                    contentDescription = note.title
-                )
-            }
+    Scaffold(
+        topBar = {
+            TopAppBar(currentScreenName = note.title)
+        }
+    ) { paddingValues ->
+        Column(modifier = modifier.padding(paddingValues)) {
+            Text(note.title)
+            note.text?.let { Text(it) }
+            note.image?.let { painterResource(it) }
+                ?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = note.title
+                    )
+                }
+        }
     }
 }
 
@@ -53,9 +93,6 @@ fun NoteItem(
     note: Note,
     modifier: Modifier = Modifier
 ) {
-//    val date = note.lastModified
-    val formatter = DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern))
-//    val formattedDate = date.format(formatter)
 
     OutlinedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -74,21 +111,20 @@ fun NoteItem(
         )
         Column(modifier.padding(16.dp)) {
             Text(note.title)
-//            Text(formattedDate.toString())
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CahierTopAppBar(modifier: Modifier = Modifier) {
+fun TopAppBar(currentScreenName: String) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.DarkGray,
             titleContentColor = Color.White
         ),
         title = {
-            Text(stringResource(R.string.all_notes))
+            Text(currentScreenName)
         }
     )
 }

@@ -1,8 +1,7 @@
-package com.example.cahier.ui
+package com.example.cahier.ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -15,11 +14,11 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
 
         initializer {
-
-            DaoViewModel(this.createSavedStateHandle(), cahierApplication().container.notesRepository)
+            DaoViewModel(cahierApplication().container.notesRepository)
         }
+
         initializer {
-            HomeViewModel(cahierApplication().container.notesRepository)
+            HomePaneViewModel(cahierApplication().container.notesRepository)
         }
     }
 }
