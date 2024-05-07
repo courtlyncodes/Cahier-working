@@ -25,7 +25,6 @@ abstract class NoteDatabase : RoomDatabase() {
                     "note_database"
                 )
                     .createFromAsset("database/notes.db")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also {
                         Instance = it

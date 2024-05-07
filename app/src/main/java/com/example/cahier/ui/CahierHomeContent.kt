@@ -37,26 +37,20 @@ fun NoteList(
     onItemClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(currentScreenName = stringResource(R.string.all_notes))
-        },
-        floatingActionButton = {
-            LargeFloatingActionButton(onClick = onButtonClick) {
-                Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
-            }
-        },
-        modifier = modifier
+    Scaffold(topBar = {
+        TopAppBar(currentScreenName = stringResource(R.string.all_notes))
+    }, floatingActionButton = {
+        LargeFloatingActionButton(onClick = onButtonClick) {
+            Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
+        }
+    }, modifier = modifier
     ) { innerPadding ->
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(184.dp),
-            Modifier.padding(innerPadding)
-        )
-        {
+            columns = GridCells.Adaptive(184.dp), Modifier.padding(innerPadding)
+        ) {
             items(count = noteList.size, key = { it }) { note ->
                 NoteItem(
-                    note = noteList[note],
-                    onClick = onItemClick
+                    note = noteList[note], onClick = onItemClick
                 )
             }
         }
@@ -66,21 +60,21 @@ fun NoteList(
 @Composable
 fun NoteDetail(
     note: Note,
+    onEditNote: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(currentScreenName = note.title)
-        }
-    ) { paddingValues ->
-        Column(modifier = modifier.padding(paddingValues)) {
+    Scaffold(topBar = {
+        TopAppBar(currentScreenName = note.title)
+    }) { paddingValues ->
+        Column(modifier = modifier
+            .clickable { onEditNote(note) }
+            .padding(paddingValues)
+        ) {
             Text(note.title)
             note.text?.let { Text(it) }
-            note.image?.let { painterResource(it) }
-                ?.let {
+            note.image?.let { painterResource(it) }?.let {
                     Image(
-                        painter = it,
-                        contentDescription = note.title
+                        painter = it, contentDescription = note.title
                     )
                 }
         }
@@ -89,19 +83,15 @@ fun NoteDetail(
 
 @Composable
 fun NoteItem(
-    onClick: (Note) -> Unit,
-    note: Note,
-    modifier: Modifier = Modifier
+    onClick: (Note) -> Unit, note: Note, modifier: Modifier = Modifier
 ) {
 
-    OutlinedCard(
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+    OutlinedCard(elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .padding(6.dp)
-            .clickable { onClick(note) }
-    ) {
+            .clickable { onClick(note) }) {
         Image(
             painterResource(R.drawable.media),
             contentDescription = null,
@@ -118,13 +108,9 @@ fun NoteItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(currentScreenName: String) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.DarkGray,
-            titleContentColor = Color.White
-        ),
-        title = {
-            Text(currentScreenName)
-        }
-    )
+    TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+        containerColor = Color.DarkGray, titleContentColor = Color.White
+    ), title = {
+        Text(currentScreenName)
+    })
 }

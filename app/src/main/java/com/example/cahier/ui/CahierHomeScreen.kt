@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
+import com.example.cahier.data.Note
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
 import com.example.cahier.ui.viewmodels.DaoViewModel
 import com.example.cahier.ui.viewmodels.HomePaneViewModel
@@ -62,6 +63,7 @@ enum class AppDestinations(
 @Composable
 fun HomeScreen(
     onButtonClick: () -> Unit,
+    onEditNote: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
@@ -83,7 +85,7 @@ fun HomeScreen(
             }
         },
     ) {
-        NoteListAndDetailPane(onButtonClick = onButtonClick)
+        NoteListAndDetailPane(onButtonClick = onButtonClick, onEditNote = onEditNote)
     }
 }
 
@@ -91,12 +93,13 @@ fun HomeScreen(
 @Composable
 fun NoteListAndDetailPane(
     onButtonClick: () -> Unit,
+    onEditNote: (Note) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     homePaneViewModel: HomePaneViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val uiState by viewModel.uiState.collectAsState()
+//    val uiState by viewModel.uiState.collectAsState()
     val homeUiState by homePaneViewModel.homeUiState.collectAsState()
 
     BackHandler(navigator.canNavigateBack()) {
@@ -110,14 +113,17 @@ fun NoteListAndDetailPane(
             NoteList(
                 noteList = homeUiState.noteList,
                 onItemClick = {
-                    viewModel.updateNote(it)
+                    viewModel.updateUiState(it)
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                 },
                 onButtonClick = onButtonClick
             )
         },
         detailPane = {
-            NoteDetail(uiState.note)
+            NoteDetail(
+                viewModel.uiState.note,
+                onEditNote = onEditNote
+            )
         }
     )
 }

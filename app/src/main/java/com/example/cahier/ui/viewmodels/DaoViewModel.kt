@@ -1,6 +1,9 @@
 package com.example.cahier.ui.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cahier.data.CahierUiState
@@ -20,36 +23,37 @@ class DaoViewModel(
     /**
      * Holds current item ui state
      */
-    private val _uiState = MutableStateFlow(CahierUiState())
-    val uiState: StateFlow<CahierUiState> = _uiState.asStateFlow()
+//    private val _uiState = MutableStateFlow(CahierUiState())
+//    var uiState: StateFlow<CahierUiState> = _uiState.asStateFlow()
+    var uiState by mutableStateOf(CahierUiState())
+        private set
 
     /**
      * Updates the [uiState] with the note values provided in the argument. This method also triggers
      * a validation for input values.
      */
-    fun updateNote(note: Note) {
-        _uiState.update { currentState ->
-            currentState.copy(note = note)
-        }
+    fun updateUiState(note: Note) {
+        uiState = CahierUiState(note)
     }
 
     /**
      * Inserts an [Note] in the Room database
      */
     suspend fun addNote() {
-        Log.wtf(TAG, "addNote")
-        viewModelScope.launch {
-            uiState.value.note.let { notesRepository.addNote(it) }
-        }
+        notesRepository.addNote(uiState.note)
     }
+
+
+    suspend fun updateNote() {
+            notesRepository.updateNote(uiState.note)
+        }
+
 
     /**
      * Resets the canvas text fields
      */
     fun resetUiState() {
        val newNote = Note(id = 0, title = "", text = "", image = null)
-        _uiState.update { currentState ->
-            currentState.copy(note = newNote)
-        }
+        uiState = CahierUiState(newNote)
     }
 }
