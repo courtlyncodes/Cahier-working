@@ -23,14 +23,14 @@ import com.example.cahier.data.Note
 @Composable
 fun NoteCanvas(
     note: Note,
-    onNavigateUp: (Note) -> Unit,
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     onValueChange: (Note) -> Unit = {}
 ) {
     var isTextFieldVisible by remember { mutableStateOf(false) }
 
     BackHandler(enabled = true) {
-        onNavigateUp(note)
+        onNavigateUp()
     }
 
     Canvas(
@@ -50,7 +50,6 @@ fun NoteCanvas(
                 placeholder = { Text(stringResource(R.string.title)) },
                 onValueChange = {
                     onValueChange(note.copy(title = it))
-
                 },
                 keyboardOptions = KeyboardOptions(
                     autoCorrect = true,

@@ -10,7 +10,7 @@ interface NotesRepository {
     /**
      * Retrieve an note from the given data source that matches with the [id].
      */
-    fun getNoteStream(id: Long): Flow<Note?>
+    fun getNoteStream(): Flow<Note>
     /**
      * Insert note in the data source
      */

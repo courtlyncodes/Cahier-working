@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class HomePaneViewModel(notesRepository: NotesRepository) : ViewModel() {
+class NotesListViewModel(notesRepository: NotesRepository) : ViewModel() {
 
     /**
      * Holds home ui state. The list of items are retrieved from [NotesRepository] and mapped to
-     * [NoteUiState]
+     * [NoteListUiState]
      */
-    val homeUiState: StateFlow<NoteUiState> =
-        notesRepository.getAllNotesStream().map { NoteUiState(it) }
+    val noteList: StateFlow<NoteListUiState> =
+        notesRepository.getAllNotesStream().map { NoteListUiState(it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = NoteUiState()
+                initialValue = NoteListUiState()
             )
 
     companion object {
@@ -31,4 +31,4 @@ class HomePaneViewModel(notesRepository: NotesRepository) : ViewModel() {
 /**
  * Ui State for HomeScreen
  */
-data class NoteUiState(val noteList: List<Note> = listOf())
+data class NoteListUiState(val noteList: List<Note> = listOf())

@@ -1,5 +1,6 @@
 package com.example.cahier.ui
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,19 +37,35 @@ fun CahierNavHost(
                     coroutineScope.launch {
                         daoViewModel.resetUiState()
                     }
-                    navController.navigate(CahierNavGraph.CANVAS.name) })
+                    navController.navigate(CahierNavGraph.CANVAS.name)
+                },
+                onEditNote = {
+                    coroutineScope.launch {
+                        daoViewModel.updateUiState(it)
+                    }
+                    navController.navigate(CahierNavGraph.CANVAS.name)
+                }
+                    )
         }
         composable(CahierNavGraph.CANVAS.name) {
             NoteCanvas(
                 note = uiState.value.note,
                 onNavigateUp = {
                     coroutineScope.launch {
-                        daoViewModel.addNote()
-                        navController.navigateUp() }
-
+                        if (uiState.value.note.id == 0.toLong()) {
+                            daoViewModel.addNote()
+                        }
+                        else {
+                            daoViewModel.updateNote()
+                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.uiState.value.note}")
+                        }
+                    }
+                    navController.navigateUp()
                 },
-                onValueChange = {daoViewModel.updateNote(it)}
+                onValueChange = {
+                    daoViewModel.updateUiState(it)
+                }
             )
         }
-            }
-            }
+    }
+}
