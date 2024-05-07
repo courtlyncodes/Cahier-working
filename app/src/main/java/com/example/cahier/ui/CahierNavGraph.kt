@@ -23,7 +23,7 @@ fun CahierNavHost(
     daoViewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController(),
 ) {
-//    val uiState = daoViewModel.uiState.collectAsState()
+    val uiState = daoViewModel.uiState.collectAsState()
     val startDestination: String = CahierNavGraph.HOME.name
     val coroutineScope = rememberCoroutineScope()
 
@@ -49,17 +49,16 @@ fun CahierNavHost(
         }
         composable(CahierNavGraph.CANVAS.name) {
             NoteCanvas(
-                note = daoViewModel.uiState.note,
+                note = uiState.value.note,
                 onNavigateUp = {
                     coroutineScope.launch {
-                        if (daoViewModel.uiState.note.id == 0.toLong()) {
+                        if (uiState.value.note.id == 0.toLong()) {
                             daoViewModel.addNote()
                         }
                         else {
                             daoViewModel.updateNote()
-                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.uiState.note}")
+                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.uiState.value.note}")
                         }
-
                     }
                     navController.navigateUp()
                 },

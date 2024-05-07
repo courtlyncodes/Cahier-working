@@ -19,7 +19,7 @@ object AppViewModelProvider {
         }
 
         initializer {
-            HomePaneViewModel(cahierApplication().container.notesRepository)
+            NotesListViewModel(cahierApplication().container.notesRepository)
         }
         initializer {
             DetailViewModel(

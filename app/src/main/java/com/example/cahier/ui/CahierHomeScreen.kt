@@ -29,7 +29,7 @@ import com.example.cahier.R
 import com.example.cahier.data.Note
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
 import com.example.cahier.ui.viewmodels.DaoViewModel
-import com.example.cahier.ui.viewmodels.HomePaneViewModel
+import com.example.cahier.ui.viewmodels.NotesListViewModel
 
 
 enum class AppDestinations(
@@ -96,11 +96,11 @@ fun NoteListAndDetailPane(
     onEditNote: (Note) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    homePaneViewModel: HomePaneViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    notesListViewModel: NotesListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-//    val uiState by viewModel.uiState.collectAsState()
-    val homeUiState by homePaneViewModel.homeUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val notesList by notesListViewModel.noteList.collectAsState()
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
@@ -111,7 +111,7 @@ fun NoteListAndDetailPane(
         value = navigator.scaffoldValue,
         listPane = {
             NoteList(
-                noteList = homeUiState.noteList,
+                noteList = notesList.noteList,
                 onItemClick = {
                     viewModel.updateUiState(it)
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
@@ -121,7 +121,7 @@ fun NoteListAndDetailPane(
         },
         detailPane = {
             NoteDetail(
-                viewModel.uiState.note,
+                uiState.note,
                 onEditNote = onEditNote
             )
         }
