@@ -19,12 +19,14 @@ adaptiveLayoutAndroid = "1.0.0-alpha09"
 adaptiveNavigationAndroid = "1.0.0-alpha09"
 navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.7.7"
+roomKtx = "2.5.2"
 windowCore = "1.2.0"
 
 [libraries]
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material3-adaptive = { module = "androidx.compose.material3:material3-adaptive" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

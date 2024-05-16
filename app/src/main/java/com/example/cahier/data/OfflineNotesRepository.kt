@@ -8,7 +8,7 @@ class OfflineNotesRepository(private val notesDao: NoteDao): NotesRepository {
     companion object { private const val TAG = "OfflineNotesRepository" }
     override fun getAllNotesStream(): Flow<List<Note>> = notesDao.getAllNotes()
 
-    override fun getNoteStream(id: Long): Flow<Note?> = notesDao.getNote(id)
+    override fun getNoteStream(id: Long): Flow<Note> = notesDao.getNote(id)
 
     override suspend fun addNote(note: Note) {
         Log.wtf(TAG, "Adding note: $note")

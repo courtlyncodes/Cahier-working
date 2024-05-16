@@ -11,7 +11,7 @@ import java.time.LocalDate
 @Entity(tableName = "notes")
 data class Note(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
     @ColumnInfo(name = "title")
     val title: String,
 //    @ColumnInfo(name = "last_modified")

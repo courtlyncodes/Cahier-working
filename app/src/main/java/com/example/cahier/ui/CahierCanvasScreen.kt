@@ -23,14 +23,14 @@ import com.example.cahier.data.Note
 @Composable
 fun NoteCanvas(
     note: Note,
-    onNavigateUp: () -> Unit,
+    onNavigateUp: (Note) -> Unit,
     modifier: Modifier = Modifier,
     onValueChange: (Note) -> Unit = {}
 ) {
     var isTextFieldVisible by remember { mutableStateOf(false) }
 
     BackHandler(enabled = true) {
-        onNavigateUp()
+        onNavigateUp(note)
     }
 
     Canvas(
