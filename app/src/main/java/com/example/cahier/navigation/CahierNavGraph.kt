@@ -3,6 +3,9 @@ package com.example.cahier.ui
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -24,8 +27,12 @@ fun CahierNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     val uiState = daoViewModel.uiState.collectAsState()
+//    var itemId =
     val startDestination: String = CahierNavGraph.HOME.name
     val coroutineScope = rememberCoroutineScope()
+    val note by daoViewModel.note.collectAsState()
+
+
 
     NavHost(
         navController = navController,
@@ -34,15 +41,11 @@ fun CahierNavHost(
         composable(CahierNavGraph.HOME.name) {
             HomeScreen(
                 onButtonClick = {
-                    coroutineScope.launch {
-                        daoViewModel.resetUiState()
-                    }
+                    daoViewModel.resetUiState()
                     navController.navigate(CahierNavGraph.CANVAS.name)
                 },
                 onEditNote = {
-                    coroutineScope.launch {
-                        daoViewModel.updateUiState(it)
-                    }
+                    daoViewModel.updateUiState(it)
                     navController.navigate(CahierNavGraph.CANVAS.name)
                 }
                     )
@@ -57,9 +60,11 @@ fun CahierNavHost(
                         }
                         else {
                             daoViewModel.updateNote()
-                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.uiState.value.note}")
+                            daoViewModel.updateUiState(uiState.value.note)
+                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.currentNoteId.value}")
                         }
                     }
+
                     navController.navigateUp()
                 },
                 onValueChange = {

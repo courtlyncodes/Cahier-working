@@ -15,18 +15,19 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
 
         initializer {
-            DaoViewModel(cahierApplication().container.notesRepository)
+            DaoViewModel(
+                cahierApplication().container.notesRepository)
         }
 
         initializer {
             NotesListViewModel(cahierApplication().container.notesRepository)
         }
-        initializer {
-            DetailViewModel(
-                this.createSavedStateHandle(),
-                cahierApplication().container.notesRepository
-            )
-        }
+//        initializer {
+//            DetailViewModel(
+//                this.createSavedStateHandle(),
+//                cahierApplication().container.notesRepository
+//            )
+//        }
     }
 }
 
