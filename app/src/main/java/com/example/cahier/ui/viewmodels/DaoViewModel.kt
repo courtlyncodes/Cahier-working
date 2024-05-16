@@ -36,8 +36,8 @@ class DaoViewModel(
         private const val TAG = "DaoViewModel"
     }
 
-    private val _uiState = MutableStateFlow(CahierUiState())
-    var uiState: StateFlow<CahierUiState> = _uiState.asStateFlow()
+    var uiState by mutableStateOf(CahierUiState())
+        private set
 
     private val _currentNoteId = MutableStateFlow(0L)
     val currentNoteId: StateFlow<Long> = _currentNoteId.asStateFlow()
@@ -81,43 +81,47 @@ class DaoViewModel(
      * Updates the [uiState] with the note values provided in the argument. This method also triggers
      * a validation for input values.
      */
-    fun updateUiState(note: Note) {
-        _uiState.update {
-            it.copy(note = note)
-        }
-    }
 //    fun updateUiState(note: Note) {
-//        uiState = CahierUiState(note)
-//    }
-
-    /**
-     * Inserts an [Note] in the Room database
-     */
-//    suspend fun addNote() {
-//        notesRepository.addNote(uiState.note)
-//    }
-    fun addNote() {
-        viewModelScope.launch {
-            notesRepository.addNote(uiState.value.note)
-        }
-    }
-
-    fun getNote() {
-        viewModelScope.launch {
-            notesRepository.getNoteStream(currentNoteId.value)
-        }
-    }
-
-
-//    suspend fun updateNote() {
-//            notesRepository.updateNote(uiState.note)
+//        _uiState.update {
+//            it.copy(note = note)
 //        }
-
-    fun updateNote() {
-        viewModelScope.launch {
-            notesRepository.updateNote(uiState.value.note)
-        }
+//    }
+    fun updateUiState(note: Note){
+uiState = CahierUiState(note)
     }
+
+    suspend fun updateNote() {
+        notesRepository.updateNote(uiState.note)
+    }
+    suspend fun addNote() {
+        notesRepository.addNote(uiState.note)
+    }
+    suspend fun deleteNote() {
+        notesRepository.deleteNote(note.value.note)
+    }
+//    fun addNote() {
+//        viewModelScope.launch {
+//            notesRepository.addNote(uiState.value.note)
+//        }
+//    }
+
+//    fun getNote() {
+//        viewModelScope.launch {
+//            notesRepository.getNoteStream(currentNoteId.value)
+//        }
+//    }
+
+//fun deleteNote() {
+//    viewModelScope.launch {
+//        notesRepository.deleteNote(uiState.value.note)
+//    }
+//}
+
+//    fun updateNote() {
+//        viewModelScope.launch {
+//            notesRepository.updateNote(uiState.value.note)
+//        }
+//    }
 
     /**
      * Resets the canvas text fields
@@ -129,8 +133,6 @@ class DaoViewModel(
 
     fun resetUiState() {
         val newNote = Note(id = 0, title = "", text = "", image = null)
-        _uiState.update {
-            it.copy(note = newNote)
-        }
+        uiState = CahierUiState(newNote)
     }
 }

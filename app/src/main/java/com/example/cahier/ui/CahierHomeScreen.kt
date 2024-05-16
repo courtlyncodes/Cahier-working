@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.example.cahier.data.Note
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
 import com.example.cahier.ui.viewmodels.DaoViewModel
 import com.example.cahier.ui.viewmodels.NotesListViewModel
+import kotlinx.coroutines.launch
 
 
 enum class AppDestinations(
@@ -102,9 +104,10 @@ fun NoteListAndDetailPane(
     notesListViewModel: NotesListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState
     val notesList by notesListViewModel.noteList.collectAsState()
     val note by viewModel.note.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
@@ -117,7 +120,6 @@ fun NoteListAndDetailPane(
             NoteList(
                 noteList = notesList.noteList,
                 onItemClick = {
-                    viewModel.updateUiState(it)
                     viewModel.setCurrentNoteId(it.id)
                     Log.wtf("noteId", viewModel.currentNoteId.value.toString())
                     Log.wtf("note", "note: ${note.note}")
@@ -130,6 +132,14 @@ fun NoteListAndDetailPane(
             Log.wtf("note", "note: ${note.note}")
                 NoteDetail(
                     note = note.note,
+                    onDelete = {
+                            Log.wtf("noteId", viewModel.currentNoteId.value.toString())
+                            Log.wtf("note", "note: ${note.note}")
+                            coroutineScope.launch {
+                                viewModel.deleteNote()
+                                navigator.navigateBack()
+                            }
+                               },
                     onEditNote = onEditNote
                 )
         }
