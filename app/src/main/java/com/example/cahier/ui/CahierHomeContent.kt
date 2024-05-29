@@ -81,10 +81,10 @@ fun NoteDetail(
             Text(note.title)
             note.text?.let { Text(it) }
             note.image?.let { painterResource(it) }?.let {
-                    Image(
-                        painter = it, contentDescription = note.title
-                    )
-                }
+                Image(
+                    painter = it, contentDescription = note.title
+                )
+            }
         }
     }
 }

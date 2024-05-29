@@ -17,11 +17,9 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -104,7 +102,6 @@ fun NoteListAndDetailPane(
     notesListViewModel: NotesListViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val uiState = viewModel.uiState
     val notesList by notesListViewModel.noteList.collectAsState()
     val note by viewModel.note.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -121,20 +118,15 @@ fun NoteListAndDetailPane(
                 noteList = notesList.noteList,
                 onItemClick = {
                     viewModel.setCurrentNoteId(it.id)
-                    Log.wtf("noteId", viewModel.currentNoteId.value.toString())
-                    Log.wtf("note", "note: ${note.note}")
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                 },
                 onButtonClick = onButtonClick
             )
         },
         detailPane = {
-            Log.wtf("note", "note: ${note.note}")
                 NoteDetail(
                     note = note.note,
                     onDelete = {
-                            Log.wtf("noteId", viewModel.currentNoteId.value.toString())
-                            Log.wtf("note", "note: ${note.note}")
                             coroutineScope.launch {
                                 viewModel.deleteNote()
                                 navigator.navigateBack()
