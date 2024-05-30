@@ -10,7 +10,6 @@ class OfflineNotesRepository(private val notesDao: NoteDao): NotesRepository {
     override fun getNoteStream(id: Long): Flow<Note> = notesDao.getNote(id)
 
     override suspend fun addNote(note: Note) {
-        Log.wtf(TAG, "Adding note: $note")
         notesDao.addNote(note)
     }
 
