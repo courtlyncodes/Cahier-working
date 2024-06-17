@@ -59,6 +59,7 @@ ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = 
 
 
 
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
