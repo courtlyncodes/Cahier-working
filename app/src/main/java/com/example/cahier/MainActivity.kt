@@ -8,9 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.cahier.navigation.CahierNavHost
-//import com.example.cahier.ui.ListAndDetailScreen
-//import com.example.cahier.ui.ListDetailPaneScaffoldScreen
-//import com.example.cahier.ui.NavigationSuiteHomePane
 import com.example.cahier.ui.theme.CahierTheme
 
 class MainActivity : ComponentActivity() {

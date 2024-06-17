@@ -1,8 +1,6 @@
 package com.example.cahier.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -26,11 +24,8 @@ fun CahierNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     val uiState = daoViewModel.uiState
-//    var itemId =
     val startDestination: String = CahierNavGraph.HOME.name
     val coroutineScope = rememberCoroutineScope()
-
-
 
     NavHost(
         navController = navController,
@@ -46,7 +41,7 @@ fun CahierNavHost(
                     daoViewModel.updateUiState(it)
                     navController.navigate(CahierNavGraph.CANVAS.name)
                 }
-                    )
+            )
         }
         composable(CahierNavGraph.CANVAS.name) {
             NoteCanvas(
@@ -55,14 +50,11 @@ fun CahierNavHost(
                     coroutineScope.launch {
                         if (uiState.note.id == 0.toLong()) {
                             daoViewModel.addNote()
-                        }
-                        else {
+                        } else {
                             daoViewModel.updateNote()
                             daoViewModel.updateUiState(uiState.note)
-                            Log.wtf("cahier nav graph", "onNavigateUp: ${daoViewModel.currentNoteId.value}")
                         }
                     }
-
                     navController.navigateUp()
                 },
                 onValueChange = {

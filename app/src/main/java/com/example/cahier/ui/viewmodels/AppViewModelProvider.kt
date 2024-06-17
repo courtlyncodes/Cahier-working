@@ -2,7 +2,6 @@ package com.example.cahier.ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -22,12 +21,6 @@ object AppViewModelProvider {
         initializer {
             NotesListViewModel(cahierApplication().container.notesRepository)
         }
-//        initializer {
-//            DetailViewModel(
-//                this.createSavedStateHandle(),
-//                cahierApplication().container.notesRepository
-//            )
-//        }
     }
 }
 

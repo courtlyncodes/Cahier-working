@@ -2,7 +2,6 @@ package com.example.cahier.data
 
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 class OfflineNotesRepository(private val notesDao: NoteDao): NotesRepository {
     companion object { private const val TAG = "OfflineNotesRepository" }
@@ -11,7 +10,6 @@ class OfflineNotesRepository(private val notesDao: NoteDao): NotesRepository {
     override fun getNoteStream(id: Long): Flow<Note> = notesDao.getNote(id)
 
     override suspend fun addNote(note: Note) {
-        Log.wtf(TAG, "Adding note: $note")
         notesDao.addNote(note)
     }
 
