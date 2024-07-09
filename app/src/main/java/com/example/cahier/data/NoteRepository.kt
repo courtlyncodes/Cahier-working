@@ -2,7 +2,7 @@ package com.example.cahier.data
 
 import kotlinx.coroutines.flow.Flow
 
-interface NotesRepository {
+interface NoteRepository {
     /**
      * Retrieve all the notes from the given data source.
      */
@@ -14,7 +14,7 @@ interface NotesRepository {
     /**
      * Insert note in the data source
      */
-    suspend fun addNote(note: Note)
+    suspend fun addNote(note: Note): Long
     /**
      * Delete note from the data source
      */

@@ -1,7 +1,6 @@
 package com.example.cahier.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,8 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cahier.ui.HomeScreen
 import com.example.cahier.ui.NoteCanvas
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
-import com.example.cahier.ui.viewmodels.DaoViewModel
-import kotlinx.coroutines.launch
+import com.example.cahier.ui.viewmodels.NoteDetailViewModel
 
 enum class CahierNavGraph {
     HOME,
@@ -20,12 +18,10 @@ enum class CahierNavGraph {
 
 @Composable
 fun CahierNavHost(
-    daoViewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController(),
+    noteDetailViewModel: NoteDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = daoViewModel.uiState
     val startDestination: String = CahierNavGraph.HOME.name
-    val coroutineScope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
@@ -33,33 +29,21 @@ fun CahierNavHost(
     ) {
         composable(CahierNavGraph.HOME.name) {
             HomeScreen(
-                onButtonClick = {
-                    daoViewModel.resetUiState()
+                navigateToCanvas = {
                     navController.navigate(CahierNavGraph.CANVAS.name)
                 },
-                onEditNote = {
-                    daoViewModel.updateUiState(it)
-                    navController.navigate(CahierNavGraph.CANVAS.name)
-                }
+                navigateUp = {
+                    navController.navigate(CahierNavGraph.HOME.name)
+                },
+                noteDetailViewModel = noteDetailViewModel
             )
         }
         composable(CahierNavGraph.CANVAS.name) {
             NoteCanvas(
-                note = uiState.note,
-                onNavigateUp = {
-                    coroutineScope.launch {
-                        if (uiState.note.id == 0.toLong()) {
-                            daoViewModel.addNote()
-                        } else {
-                            daoViewModel.updateNote()
-                            daoViewModel.updateUiState(uiState.note)
-                        }
-                    }
+                navigateUp = {
                     navController.navigateUp()
                 },
-                onValueChange = {
-                    daoViewModel.updateUiState(it)
-                }
+                noteDetailViewModel = noteDetailViewModel
             )
         }
     }

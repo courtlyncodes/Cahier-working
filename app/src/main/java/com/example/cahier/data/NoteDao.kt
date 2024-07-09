@@ -17,7 +17,7 @@ interface NoteDao {
     fun getNote(id: Long): Flow<Note>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addNote(note: Note)
+    suspend fun addNote(note: Note): Long
 
     @Update
     suspend fun updateNote(note: Note)
