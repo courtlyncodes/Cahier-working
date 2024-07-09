@@ -1,6 +1,7 @@
 package com.example.cahier.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -16,13 +17,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
 import com.example.cahier.ui.viewmodels.NoteDetailViewModel
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NoteCanvas(
     navigateUp: () -> Unit,
@@ -32,21 +44,36 @@ fun NoteCanvas(
     val uiState by noteDetailViewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     var isTextFieldVisible by remember { mutableStateOf(false) }
+    val viewModel: StylusViewModel = viewModel()
+    val strokeStyle = Stroke(10F)
+    val stylusState by remember { mutableStateOf(StylusState()) }
 
     BackHandler(enabled = true) {
         navigateUp()
         noteDetailViewModel.updateUiState(uiState.note)
     }
 
+
     Canvas(
         modifier = modifier
+            .clipToBounds()
             .fillMaxSize()
+            .pointerInteropFilter {
+                viewModel.processMotionEvent(it)
+            }
             .pointerInput(key1 = Unit) {
                 detectTapGestures {
                     isTextFieldVisible = true
                 }
             }
     ) {
+        with(stylusState) {
+        drawPath(
+            path = this.path,
+            color = Color.Magenta,
+            style = strokeStyle
+        )
+    }
     }
     if (isTextFieldVisible) {
         Column {
