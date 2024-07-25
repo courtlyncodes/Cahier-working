@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,20 +18,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
-import com.example.cahier.data.Note
+import com.example.cahier.navigation.NavigationDestination
+import com.example.cahier.ui.viewmodels.AppViewModelProvider
+import com.example.cahier.ui.viewmodels.CanvasScreenViewModel
+
+object NoteCanvasDestination : NavigationDestination {
+    override val route = "note_canvas"
+    const val NOTE_ID_ARG = "noteId"
+    val routeWithArgs = "$route/{$NOTE_ID_ARG}"
+}
 
 @Composable
 fun NoteCanvas(
-    note: Note,
-    onNavigateUp: (Note) -> Unit,
+    navigateUp: () -> Unit,
+
     modifier: Modifier = Modifier,
-    onValueChange: (Note) -> Unit = {}
+    canvasScreenViewModel: CanvasScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState = canvasScreenViewModel.note.collectAsState()
     var isTextFieldVisible by remember { mutableStateOf(false) }
 
     BackHandler(enabled = true) {
-        onNavigateUp(note)
+        navigateUp()
     }
 
     Canvas(
@@ -46,25 +57,29 @@ fun NoteCanvas(
     if (isTextFieldVisible) {
         Column {
             TextField(
-                value = note.title,
+                value = uiState.value.note.title,
                 placeholder = { Text(stringResource(R.string.title)) },
                 onValueChange = {
-                    onValueChange(note.copy(title = it))
+                    canvasScreenViewModel.updateUiState(uiState.value.note.copy(title = it))
+                    canvasScreenViewModel.updateNoteTitle(it)
                 },
                 keyboardOptions = KeyboardOptions(
-                    autoCorrect = true,
-                    shouldShowKeyboardOnFocus = true
+                    autoCorrectEnabled = true,
+                    showKeyboardOnFocus = true
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            note.text?.let { it ->
+            uiState.value.note.text?.let { it ->
                 TextField(
                     value = it,
                     placeholder = { Text(stringResource(R.string.note)) },
-                    onValueChange = { onValueChange(note.copy(text = it)) },
+                    onValueChange = {
+                        canvasScreenViewModel.updateUiState(uiState.value.note.copy(text = it))
+                        canvasScreenViewModel.updateNoteText(it)
+                    },
                     keyboardOptions = KeyboardOptions(
-                        autoCorrect = true,
-                        shouldShowKeyboardOnFocus = true
+                        autoCorrectEnabled = true,
+                        showKeyboardOnFocus = true
                     ),
                     modifier = Modifier
                         .fillMaxSize()

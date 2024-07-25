@@ -17,7 +17,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -36,17 +37,17 @@ import com.example.cahier.data.Note
 @Composable
 fun NoteList(
     noteList: List<Note>,
-    onButtonClick: () -> Unit,
-    onDelete: () -> Unit = {},
-    onItemClick: (Note) -> Unit,
-    modifier: Modifier = Modifier
+    onAddNewNote: () -> Unit,
+    onNoteClick: (Note) -> Unit,
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit = {}
 ) {
     Scaffold(topBar = {
-        TopAppBar(onDelete = onDelete, currentScreenName = stringResource(R.string.all_notes))
+        HomeTopAppBar(onDelete = onDelete, currentScreenName = stringResource(R.string.home))
     }, floatingActionButton = {
-        LargeFloatingActionButton(onClick = onButtonClick) {
-            Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
-        }
+            IconButton(onClick = onAddNewNote, colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),) {
+                Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
+            }
     }, modifier = modifier
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -54,7 +55,7 @@ fun NoteList(
         ) {
             items(count = noteList.size, key = { it }) { note ->
                 NoteItem(
-                    note = noteList[note], onClick = onItemClick
+                    note = noteList[note], onNoteClick = onNoteClick
                 )
             }
         }
@@ -65,17 +66,14 @@ fun NoteList(
 fun NoteDetail(
     note: Note,
     onDelete: () -> Unit,
-    onEditNote: (Note) -> Unit,
+    onClickToEdit: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(topBar = {
-        TopAppBar(
-            onDelete = { onDelete() },
-            currentScreenName = note.title
-        )
+        NoteTopAppBar(onDelete = onDelete, currentScreenName = note.title)
     }) { paddingValues ->
         Column(modifier = modifier
-            .clickable { onEditNote(note) }
+            .clickable { onClickToEdit(note) }
             .padding(paddingValues)
         ) {
             Text(note.title)
@@ -91,14 +89,14 @@ fun NoteDetail(
 
 @Composable
 fun NoteItem(
-    onClick: (Note) -> Unit, note: Note, modifier: Modifier = Modifier
+    onNoteClick: (Note) -> Unit, note: Note, modifier: Modifier = Modifier
 ) {
     OutlinedCard(elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .padding(6.dp)
-            .clickable { onClick(note) }) {
+            .clickable { onNoteClick(note) }) {
         Image(
             painterResource(R.drawable.media),
             contentDescription = null,
@@ -114,7 +112,32 @@ fun NoteItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(
+fun NoteTopAppBar(
+    onDelete: () -> Unit,
+    currentScreenName: String
+) {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.DarkGray, titleContentColor = Color.White
+        ), title = {
+            Row {
+                Text(currentScreenName)
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { onDelete() },
+                    content = {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.floating_action_button_des),
+                        )
+                    })
+            }
+        })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopAppBar(
     onDelete: () -> Unit,
     currentScreenName: String
 ) {
@@ -123,15 +146,6 @@ fun TopAppBar(
     ), title = {
         Row {
             Text(currentScreenName)
-            if (currentScreenName != stringResource(R.string.all_notes)) {
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    Icons.Filled.Delete,
-                    contentDescription = stringResource(R.string.floating_action_button_des),
-                    modifier = Modifier.clickable { onDelete() }
-                )
-            }
         }
-
     })
 }

@@ -1,64 +1,46 @@
 package com.example.cahier.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.cahier.ui.HomeScreen
+import androidx.navigation.navArgument
+import com.example.cahier.ui.HomeDestination
+import com.example.cahier.ui.HomePane
 import com.example.cahier.ui.NoteCanvas
-import com.example.cahier.ui.viewmodels.AppViewModelProvider
-import com.example.cahier.ui.viewmodels.DaoViewModel
-import kotlinx.coroutines.launch
+import com.example.cahier.ui.NoteCanvasDestination
 
-enum class CahierNavGraph {
-    HOME,
-    CANVAS
-}
 
 @Composable
 fun CahierNavHost(
-    daoViewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController
 ) {
-    val uiState = daoViewModel.uiState
-    val startDestination: String = CahierNavGraph.HOME.name
-    val coroutineScope = rememberCoroutineScope()
+    val startDestination: String = HomeDestination.route
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(CahierNavGraph.HOME.name) {
-            HomeScreen(
-                onButtonClick = {
-                    daoViewModel.resetUiState()
-                    navController.navigate(CahierNavGraph.CANVAS.name)
+        composable(HomeDestination.route) {
+            HomePane(
+                navigateToCanvas = {
+                    navController.navigate("${NoteCanvasDestination.route}/${it}")
                 },
-                onEditNote = {
-                    daoViewModel.updateUiState(it)
-                    navController.navigate(CahierNavGraph.CANVAS.name)
+                navigateUp = {
+                    navController.navigate(HomeDestination.route)
                 }
             )
         }
-        composable(CahierNavGraph.CANVAS.name) {
+        composable(
+            route = NoteCanvasDestination.routeWithArgs,
+            arguments = listOf(navArgument(NoteCanvasDestination.NOTE_ID_ARG) {
+                type = NavType.LongType
+            })
+        ) {
             NoteCanvas(
-                note = uiState.note,
-                onNavigateUp = {
-                    coroutineScope.launch {
-                        if (uiState.note.id == 0.toLong()) {
-                            daoViewModel.addNote()
-                        } else {
-                            daoViewModel.updateNote()
-                            daoViewModel.updateUiState(uiState.note)
-                        }
-                    }
+                navigateUp = {
                     navController.navigateUp()
-                },
-                onValueChange = {
-                    daoViewModel.updateUiState(it)
                 }
             )
         }

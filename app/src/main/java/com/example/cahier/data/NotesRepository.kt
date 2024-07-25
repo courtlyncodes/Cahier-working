@@ -14,7 +14,7 @@ interface NotesRepository {
     /**
      * Insert note in the data source
      */
-    suspend fun addNote(note: Note)
+    suspend fun addNote(note: Note): Long
     /**
      * Delete note from the data source
      */

@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -62,18 +62,18 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    // Adaptive layouts dependencies
-    implementation(libs.androidx.material3.adaptive.navigation.suite.android)
-    implementation(libs.androidx.adaptive.android)
-    implementation(libs.androidx.adaptive.layout.android)
-    implementation(libs.androidx.adaptive.navigation.android)
-    implementation(libs.androidx.adaptive)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window.core)
+    implementation(libs.androidx.foundation)
+
+    // Adaptive layouts dependencies
+    implementation(libs.material3.adaptive.navigation.suite.android)
+    implementation(libs.androidx.adaptive.navigation.android)
+
     //Room
     implementation(libs.androidx.room.runtime)
-    implementation(libs.ksp)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
     testImplementation(libs.junit)

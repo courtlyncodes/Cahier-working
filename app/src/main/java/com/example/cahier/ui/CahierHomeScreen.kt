@@ -1,6 +1,5 @@
 package com.example.cahier.ui
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -14,13 +13,11 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
-import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,12 +25,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
-import com.example.cahier.data.Note
+import com.example.cahier.navigation.NavigationDestination
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
-import com.example.cahier.ui.viewmodels.DaoViewModel
-import com.example.cahier.ui.viewmodels.NotesListViewModel
-import kotlinx.coroutines.launch
+import com.example.cahier.ui.viewmodels.NoteListViewModel
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+}
 
 enum class AppDestinations(
     @StringRes val label: Int,
@@ -62,14 +60,22 @@ enum class AppDestinations(
     )
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun HomeScreen(
-    onButtonClick: () -> Unit,
-    onEditNote: (Note) -> Unit,
-    modifier: Modifier = Modifier
+fun HomePane(
+    navigateToCanvas: (Long) -> Unit,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
+    noteListViewModel: NoteListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+    val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
+    val noteList by noteListViewModel.noteList.collectAsState()
+    val selectedNote by noteListViewModel.uiState.collectAsState()
+
+    BackHandler(navigator.canNavigateBack()) {
+        navigator.navigateBack()
+    }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
@@ -88,52 +94,37 @@ fun HomeScreen(
             }
         },
     ) {
-        NoteListAndDetailPane(onButtonClick = onButtonClick, onEditNote = onEditNote)
-    }
-}
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-fun NoteListAndDetailPane(
-    onButtonClick: () -> Unit,
-    onEditNote: (Note) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: DaoViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    notesListViewModel: NotesListViewModel = viewModel(factory = AppViewModelProvider.Factory),
-) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val notesList by notesListViewModel.noteList.collectAsState()
-    val note by viewModel.note.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-
-    BackHandler(navigator.canNavigateBack()) {
-        navigator.navigateBack()
-    }
-
-    ListDetailPaneScaffold(
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
-        listPane = {
-            NoteList(
-                noteList = notesList.noteList,
-                onItemClick = {
-                    viewModel.setCurrentNoteId(it.id)
-                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                },
-                onButtonClick = onButtonClick
-            )
-        },
-        detailPane = {
-                NoteDetail(
-                    note = note.note,
-                    onDelete = {
-                            coroutineScope.launch {
-                                viewModel.deleteNote()
-                                navigator.navigateBack()
-                            }
-                               },
-                    onEditNote = onEditNote
+        ListDetailPaneScaffold(
+            directive = navigator.scaffoldDirective,
+            value = navigator.scaffoldValue,
+            listPane = {
+                NoteList(
+                    noteList = noteList.noteList,
+                    onNoteClick = {
+                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                        noteListViewModel.selectNote(it.id)
+                    },
+                    onAddNewNote = {
+                        noteListViewModel.addNote { it ->
+                            navigateToCanvas(it)
+                        }
+                    }
                 )
-        }
-    )
+            },
+            detailPane = {
+                selectedNote?.let { it ->
+                    NoteDetail(
+                        note = it,
+                        onDelete = {
+                            noteListViewModel.deleteNote()
+                            navigateUp()
+                        },
+                        onClickToEdit = {
+                            navigateToCanvas(it.id)
+                        }
+                    )
+                }
+            }
+        )
+    }
 }
