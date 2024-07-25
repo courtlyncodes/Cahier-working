@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.cahier.navigation.CahierNavHost
+import com.example.cahier.ui.CahierApp
 import com.example.cahier.ui.StylusState
 import com.example.cahier.ui.StylusViewModel
 import com.example.cahier.ui.theme.CahierTheme
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   CahierNavHost()
+                   CahierApp()
                 }
             }
         }

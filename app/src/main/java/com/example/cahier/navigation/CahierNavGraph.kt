@@ -1,49 +1,47 @@
 package com.example.cahier.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.cahier.ui.HomeScreen
+import androidx.navigation.navArgument
+import com.example.cahier.ui.HomeDestination
+import com.example.cahier.ui.HomePane
 import com.example.cahier.ui.NoteCanvas
-import com.example.cahier.ui.viewmodels.AppViewModelProvider
-import com.example.cahier.ui.viewmodels.NoteDetailViewModel
+import com.example.cahier.ui.NoteCanvasDestination
 
-enum class CahierNavGraph {
-    HOME,
-    CANVAS
-}
 
 @Composable
 fun CahierNavHost(
-    navController: NavHostController = rememberNavController(),
-    noteDetailViewModel: NoteDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    navController: NavHostController
 ) {
-    val startDestination: String = CahierNavGraph.HOME.name
+    val startDestination: String = HomeDestination.route
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(CahierNavGraph.HOME.name) {
-            HomeScreen(
+        composable(HomeDestination.route) {
+            HomePane(
                 navigateToCanvas = {
-                    navController.navigate(CahierNavGraph.CANVAS.name)
+                    navController.navigate("${NoteCanvasDestination.route}/${it}")
                 },
                 navigateUp = {
-                    navController.navigate(CahierNavGraph.HOME.name)
-                },
-                noteDetailViewModel = noteDetailViewModel
+                    navController.navigate(HomeDestination.route)
+                }
             )
         }
-        composable(CahierNavGraph.CANVAS.name) {
+        composable(
+            route = NoteCanvasDestination.routeWithArgs,
+            arguments = listOf(navArgument(NoteCanvasDestination.NOTE_ID_ARG) {
+                type = NavType.LongType
+            })
+        ) {
             NoteCanvas(
                 navigateUp = {
                     navController.navigateUp()
-                },
-                noteDetailViewModel = noteDetailViewModel
+                }
             )
         }
     }

@@ -2,7 +2,7 @@ package com.example.cahier.data
 
 import kotlinx.coroutines.flow.Flow
 
-interface NoteRepository {
+interface NotesRepository {
     /**
      * Retrieve all the notes from the given data source.
      */
