@@ -115,7 +115,6 @@ fun NoteCanvas(
             )
             uiState.value.note.text?.let { it ->
                 TextField(
-
                     value = it,
                     placeholder = { Text(stringResource(R.string.note)) },
                     onValueChange = {
