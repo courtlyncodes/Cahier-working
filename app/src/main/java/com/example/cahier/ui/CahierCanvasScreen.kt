@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
 import com.example.cahier.ui.viewmodels.NoteDetailViewModel
+import com.example.cahier.ui.viewmodels.StylusViewModel
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
