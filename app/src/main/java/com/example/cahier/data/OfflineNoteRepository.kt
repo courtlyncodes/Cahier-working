@@ -1,9 +1,10 @@
 package com.example.cahier.data
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 
-class OfflineNoteRepository(private val notesDao: NoteDao): NoteRepository {
-    companion object { private const val TAG = "OfflineNotesRepository" }
+class OfflineNotesRepository(private val notesDao: NoteDao) : NotesRepository {
+
     override fun getAllNotesStream(): Flow<List<Note>> = notesDao.getAllNotes()
 
     override fun getNoteStream(id: Long): Flow<Note> = notesDao.getNote(id)

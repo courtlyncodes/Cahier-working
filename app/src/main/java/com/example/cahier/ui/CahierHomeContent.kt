@@ -45,9 +45,9 @@ fun NoteList(
     Scaffold(topBar = {
         HomeTopAppBar(onDelete = onDelete, currentScreenName = stringResource(R.string.home))
     }, floatingActionButton = {
-        IconButton(onClick = onAddNewNote, colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),) {
-            Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
-        }
+            IconButton(onClick = onAddNewNote, colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),) {
+                Icon(Icons.Filled.Add, stringResource(R.string.floating_action_button_des))
+            }
     }, modifier = modifier
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -55,7 +55,7 @@ fun NoteList(
         ) {
             items(count = noteList.size, key = { it }) { note ->
                 NoteItem(
-                    note = noteList[note], onClick = onNoteClick
+                    note = noteList[note], onNoteClick = onNoteClick
                 )
             }
         }
@@ -89,14 +89,14 @@ fun NoteDetail(
 
 @Composable
 fun NoteItem(
-    onClick: (Note) -> Unit, note: Note, modifier: Modifier = Modifier
+    onNoteClick: (Note) -> Unit, note: Note, modifier: Modifier = Modifier
 ) {
     OutlinedCard(elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .padding(6.dp)
-            .clickable { onClick(note) }) {
+            .clickable { onNoteClick(note) }) {
         Image(
             painterResource(R.drawable.media),
             contentDescription = null,
