@@ -20,9 +20,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
+import com.example.cahier.ui.viewmodels.StylusViewModel
 import com.example.cahier.navigation.NavigationDestination
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
 import com.example.cahier.ui.viewmodels.CanvasScreenViewModel
+
 
 object NoteCanvasDestination : NavigationDestination {
     override val route = "note_canvas"

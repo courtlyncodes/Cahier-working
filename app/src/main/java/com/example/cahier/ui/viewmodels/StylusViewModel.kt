@@ -1,4 +1,4 @@
-package com.example.cahier.ui
+package com.example.cahier.ui.viewmodels
 
 import android.os.Build
 import android.view.MotionEvent
@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.lifecycle.ViewModel
 import com.example.cahier.data.DrawPoint
 import com.example.cahier.data.DrawPointType
+import com.example.cahier.ui.StylusState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
