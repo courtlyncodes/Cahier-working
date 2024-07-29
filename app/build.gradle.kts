@@ -71,13 +71,10 @@ dependencies {
     implementation(libs.material3.adaptive.navigation.suite.android)
     implementation(libs.androidx.adaptive.navigation.android)
 
-    // Room
+    //Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-
-    // Compose UI for drawing
-    implementation(libs.ui)
 
     testImplementation(libs.junit)
 
