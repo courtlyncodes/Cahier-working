@@ -42,7 +42,6 @@ object NoteCanvasDestination : NavigationDestination {
 @Composable
 fun NoteCanvas(
     navigateUp: () -> Unit,
-
     modifier: Modifier = Modifier,
     canvasScreenViewModel: CanvasScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -72,6 +71,7 @@ fun NoteCanvas(
                         // Check if the event is from a stylus
                         if (it.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
                             viewModel.processMotionEvent(it)
+                            isTextFieldVisible = false
                             true // Consume the event
                         } else {
                             isTextFieldVisible = true
@@ -84,7 +84,7 @@ fun NoteCanvas(
             }
 //            .pointerInput(key1 = Unit) {
 //                detectTapGestures {
-//                    isTextFieldVisible = false
+//                    isTextFieldVisible = true
 //                }
 //            }
     ) {
@@ -98,7 +98,7 @@ fun NoteCanvas(
             }
         }
     }
-    if (!isTextFieldVisible) {
+    if (isTextFieldVisible) {
         Column {
             TextField(
                 value = uiState.value.note.title,
