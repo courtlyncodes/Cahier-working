@@ -18,11 +18,14 @@ import com.example.cahier.ui.CahierApp
 import com.example.cahier.ui.StylusState
 import com.example.cahier.ui.viewmodels.StylusViewModel
 import com.example.cahier.ui.theme.CahierTheme
+import com.example.cahier.ui.viewmodels.StylusViewModelFactory
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: StylusViewModel by viewModels()
+    private val viewModel: StylusViewModel by viewModels() {
+        StylusViewModelFactory((application as CahierApplication).container.notesRepository)
+    }
     private var stylusState: StylusState by mutableStateOf(StylusState())
 
     override fun onCreate(savedInstanceState: Bundle?) {
