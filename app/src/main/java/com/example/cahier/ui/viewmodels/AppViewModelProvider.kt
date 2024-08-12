@@ -24,6 +24,11 @@ object AppViewModelProvider {
         initializer {
             NoteListViewModel(cahierApplication().container.notesRepository)
         }
+        initializer {
+            StylusViewModel(
+                cahierApplication().container.notesRepository,
+            )
+        }
     }
 }
 

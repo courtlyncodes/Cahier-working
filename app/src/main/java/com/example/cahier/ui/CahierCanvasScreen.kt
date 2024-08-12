@@ -3,7 +3,6 @@ package com.example.cahier.ui
 import android.view.MotionEvent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
 import com.example.cahier.navigation.NavigationDestination
@@ -43,16 +42,23 @@ object NoteCanvasDestination : NavigationDestination {
 fun NoteCanvas(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    canvasScreenViewModel: CanvasScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    canvasScreenViewModel: CanvasScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    stylusViewModel: StylusViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState = canvasScreenViewModel.note.collectAsState()
     var isTextFieldVisible by remember { mutableStateOf(false) }
-    val viewModel: StylusViewModel = viewModel()
     val strokeStyle = Stroke(10F)
     var stylusState by remember { mutableStateOf(StylusState()) }
+    val existingPaths = canvasScreenViewModel.existingPaths.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.stylusState.collect { state ->
+        canvasScreenViewModel.note.collect{ note ->
+            stylusViewModel.setNoteId(note.note.id)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        stylusViewModel.stylusState.collect { state ->
             stylusState = state
         }
     }
@@ -70,25 +76,25 @@ fun NoteCanvas(
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
                         // Check if the event is from a stylus
                         if (it.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
-                            viewModel.processMotionEvent(it)
-                            isTextFieldVisible = false
+                            stylusViewModel.processMotionEvent(it)
                             true // Consume the event
                         } else {
                             isTextFieldVisible = true
                             false // Not a stylus event, let it pass through
                         }
                     }
-
                     else -> false // For other events, let them pass through
                 }
             }
-//            .pointerInput(key1 = Unit) {
-//                detectTapGestures {
-//                    isTextFieldVisible = true
-//                }
-//            }
     ) {
         if (!isTextFieldVisible) {
+            existingPaths.value.forEach { path ->
+                drawPath(
+                    path = path,
+                    color = Color.Magenta,
+                    style = strokeStyle
+                )
+            }
             with(stylusState) {
                 drawPath(
                     path = this.path,

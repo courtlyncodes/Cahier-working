@@ -1,5 +1,6 @@
 package com.example.cahier.ui.viewmodels
 
+import androidx.compose.ui.graphics.Path
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,12 +25,17 @@ class CanvasScreenViewModel(
 
     private val noteId: Long? = savedStateHandle[NoteCanvasDestination.NOTE_ID_ARG]
 
+
+    private val _existingPaths = MutableStateFlow<List<Path>>(emptyList())
+    val existingPaths: StateFlow<List<Path>> = _existingPaths.asStateFlow()
+
     init {
         viewModelScope.launch {
             noteRepository.getNoteStream(noteId!!)
                 .filterNotNull()
-                .collect {
-                    _note.value = CahierUiState(it)
+                .collect { note ->
+                    _note.value = CahierUiState(note)
+                    loadExistingPaths(note.id)
                 }
         }
     }
@@ -56,5 +62,15 @@ class CanvasScreenViewModel(
 
     fun updateUiState(note: Note) {
         _note.update { it.copy(note = note) }
+    }
+
+    private fun loadExistingPaths(noteId: Long) {
+        viewModelScope.launch {
+            noteRepository.getDrawingsForNote(noteId).collect { drawings ->
+                _existingPaths.update {
+                    return@update  drawings
+                }
+            }
+        }
     }
 }
