@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
+// Data access object for CRUD operations on the notes table
 @Dao
 interface NoteDao {
     @Query("SELECT * FROM notes")
@@ -24,4 +25,6 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNote(note: Note)
+
+
 }

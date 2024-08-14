@@ -110,6 +110,8 @@ fun NoteItem(
     }
 }
 
+// Top App Bar for a note
+// Displays the title of the note and a delete button
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteTopAppBar(
@@ -135,6 +137,8 @@ fun NoteTopAppBar(
         })
 }
 
+// Top App Bar for Home Pane
+// Displays 'Home' for the title
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(

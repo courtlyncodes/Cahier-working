@@ -2,11 +2,13 @@
 adaptive = "1.0.0-beta04"
 agp = "8.4.2"
 foundation = "1.7.0-beta04"
+gson = "2.10.1"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+kotlinxSerializationJson = "1.7.1"
 lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.2"
 composeBom = "2023.08.00"
@@ -30,6 +32,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -51,6 +54,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "windowCore" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material3-adaptive-navigation-suite-android = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite-android", version.ref = "material3AdaptiveNavigationSuiteAndroidVersion" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 

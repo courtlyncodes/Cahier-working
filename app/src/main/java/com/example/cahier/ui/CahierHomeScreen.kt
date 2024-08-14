@@ -27,12 +27,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cahier.R
 import com.example.cahier.navigation.NavigationDestination
 import com.example.cahier.ui.viewmodels.AppViewModelProvider
-import com.example.cahier.ui.viewmodels.NoteListViewModel
+import com.example.cahier.ui.viewmodels.HomeScreenViewModel
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
 }
 
+// Navigation Suite items
+// Disabled
 enum class AppDestinations(
     @StringRes val label: Int,
     val icon: ImageVector,
@@ -66,17 +68,18 @@ fun HomePane(
     navigateToCanvas: (Long) -> Unit,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    noteListViewModel: NoteListViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    homeScreenViewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val noteList by noteListViewModel.noteList.collectAsState()
-    val selectedNote by noteListViewModel.uiState.collectAsState()
+    val noteList by homeScreenViewModel.noteList.collectAsState()
+    val selectedNote by homeScreenViewModel.uiState.collectAsState()
 
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
     }
 
+    // Navigation Suite displays the navigation items
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             AppDestinations.entries.forEach {
@@ -94,29 +97,32 @@ fun HomePane(
             }
         },
     ) {
+        // NSS holds this scaffold to show one or two panes depending on the device's screen size
         ListDetailPaneScaffold(
             directive = navigator.scaffoldDirective,
             value = navigator.scaffoldValue,
+            // Shows the list of notes
             listPane = {
                 NoteList(
                     noteList = noteList.noteList,
                     onNoteClick = {
                         navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                        noteListViewModel.selectNote(it.id)
+                        homeScreenViewModel.selectNote(it.id) /* When a note is clicked, it's id is passed to the view model */
                     },
                     onAddNewNote = {
-                        noteListViewModel.addNote { it ->
+                        homeScreenViewModel.addNote { it ->
                             navigateToCanvas(it)
                         }
                     }
                 )
             },
+            // Shows the content of the selected note
             detailPane = {
                 selectedNote?.let { it ->
                     NoteDetail(
                         note = it,
                         onDelete = {
-                            noteListViewModel.deleteNote()
+                            homeScreenViewModel.deleteNote()
                             navigateUp()
                         },
                         onClickToEdit = {

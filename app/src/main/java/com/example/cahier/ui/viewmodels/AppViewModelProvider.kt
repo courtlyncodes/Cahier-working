@@ -22,7 +22,14 @@ object AppViewModelProvider {
         }
 
         initializer {
-            NoteListViewModel(cahierApplication().container.notesRepository)
+            HomeScreenViewModel(cahierApplication().container.notesRepository)
+        }
+
+        // Each View Model should be initialized if it uses dependency injection without Dagger or Hilt
+        initializer {
+            StylusViewModel(
+                cahierApplication().container.notesRepository,
+            )
         }
     }
 }

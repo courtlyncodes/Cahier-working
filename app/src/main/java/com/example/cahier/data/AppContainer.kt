@@ -14,9 +14,10 @@ interface AppContainer {
  */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
+     *
      * Implementation for [NotesRepository]
      */
     override val notesRepository: NotesRepository by lazy {
-        OfflineNotesRepository(NoteDatabase.getDatabase(context).noteDao())
+        OfflineNotesRepository(NoteDatabase.getDatabase(context).noteDao(), NoteDatabase.getDatabase(context).drawingDao())
     }
 }

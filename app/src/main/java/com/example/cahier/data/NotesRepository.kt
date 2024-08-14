@@ -1,5 +1,6 @@
 package com.example.cahier.data
 
+import androidx.compose.ui.graphics.Path
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
@@ -23,4 +24,9 @@ interface NotesRepository {
      * Update note in the data source
      */
     suspend fun updateNote(note: Note)
+    /* Drawing functions for the stylus */
+    suspend fun getDrawingsForNote(noteId: Long): Flow<List<Path>>
+    suspend fun addDrawing(noteId: Long, drawing: Path): Long
+    suspend fun updateDrawing(noteId: Long, drawing: Path)
+    suspend fun deleteDrawing(noteId: Long, drawing: Path)
 }
