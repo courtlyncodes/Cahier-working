@@ -51,20 +51,18 @@ fun NoteCanvas(
     var stylusState by remember { mutableStateOf(StylusState()) }
     val existingPaths = canvasScreenViewModel.existingPaths.collectAsState()
 
+    // When a note is pressed, the noteId is passed to the stylusViewModel
     LaunchedEffect(Unit) {
         canvasScreenViewModel.note.collect{ note ->
             stylusViewModel.setNoteId(note.note.id)
         }
     }
 
+    // When the stylusState changes, update the stylusState in the viewModel
     LaunchedEffect(Unit) {
         stylusViewModel.stylusState.collect { state ->
             stylusState = state
         }
-    }
-
-    BackHandler(enabled = true) {
-        navigateUp()
     }
 
     Canvas(
@@ -79,6 +77,8 @@ fun NoteCanvas(
                             stylusViewModel.processMotionEvent(it)
                             true // Consume the event
                         } else {
+
+                            // If not a stylus event, text field should be visible so user can type in the note
                             isTextFieldVisible = true
                             false // Not a stylus event, let it pass through
                         }
@@ -87,30 +87,33 @@ fun NoteCanvas(
                 }
             }
     ) {
+        // If a stylus is detected, user can draw on canvas
         if (!isTextFieldVisible) {
+            // Load existing paths from the database
             existingPaths.value.forEach { path ->
                 drawPath(
                     path = path,
-                    color = Color.Magenta,
+                    color = Color(0xFFA4C639),
                     style = strokeStyle
                 )
             }
+            // Draw the current path
             with(stylusState) {
                 drawPath(
                     path = this.path,
-                    color = Color.Magenta,
+                    color = Color(0xFFA4C639),
                     style = strokeStyle
                 )
             }
         }
     }
+    // User can type in the note
     if (isTextFieldVisible) {
         Column {
             TextField(
                 value = uiState.value.note.title,
                 placeholder = { Text(stringResource(R.string.title)) },
                 onValueChange = {
-                    canvasScreenViewModel.updateUiState(uiState.value.note.copy(title = it))
                     canvasScreenViewModel.updateNoteTitle(it)
                 },
                 keyboardOptions = KeyboardOptions(
@@ -124,7 +127,6 @@ fun NoteCanvas(
                     value = it,
                     placeholder = { Text(stringResource(R.string.note)) },
                     onValueChange = {
-                        canvasScreenViewModel.updateUiState(uiState.value.note.copy(text = it))
                         canvasScreenViewModel.updateNoteText(it)
                     },
                     keyboardOptions = KeyboardOptions(
@@ -136,5 +138,5 @@ fun NoteCanvas(
                 )
             }
         }
-        }
+       }
     }

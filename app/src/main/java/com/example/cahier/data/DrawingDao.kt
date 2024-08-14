@@ -6,6 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+
+// Data Access Object (DAO) for stylus drawings
+
 @Dao
 interface DrawingDao {
     @Query("SELECT * FROM stylus_drawings WHERE noteId = :noteId")

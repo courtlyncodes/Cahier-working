@@ -14,6 +14,7 @@ interface AppContainer {
  */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
+     *
      * Implementation for [NotesRepository]
      */
     override val notesRepository: NotesRepository by lazy {

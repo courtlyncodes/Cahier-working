@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation (libs.gson)
 
+    // Serialization (for stylus)
+    implementation (libs.gson)
+
     // Adaptive layouts dependencies
     implementation(libs.material3.adaptive.navigation.suite.android)
     implementation(libs.androidx.adaptive.navigation.android)

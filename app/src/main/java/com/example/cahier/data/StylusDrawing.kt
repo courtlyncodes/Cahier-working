@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
+// Table for stylus drawings
 @Entity(
     tableName = "stylus_drawings",
     foreignKeys = [
@@ -15,6 +16,8 @@ import androidx.room.PrimaryKey
         )
     ]
 )
+
+// Data class representing a stylus drawing
 data class StylusDrawing(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val noteId: Long,

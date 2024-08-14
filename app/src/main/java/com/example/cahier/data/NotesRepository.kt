@@ -24,6 +24,8 @@ interface NotesRepository {
      * Update note in the data source
      */
     suspend fun updateNote(note: Note)
+    
+    /* Drawing functions for the stylus */
     suspend fun getDrawingsForNote(noteId: Long): Flow<List<Path>>
     suspend fun addDrawing(noteId: Long, drawing: Path): Long
     suspend fun updateDrawing(noteId: Long, drawing: Path)

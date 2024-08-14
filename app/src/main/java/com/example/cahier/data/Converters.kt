@@ -8,6 +8,11 @@ import com.example.cahier.ui.StylusState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+
+
+// Type Converter to convert path to string and back
+// Ask Chris about this
+
 class Converters {
 
     @TypeConverter

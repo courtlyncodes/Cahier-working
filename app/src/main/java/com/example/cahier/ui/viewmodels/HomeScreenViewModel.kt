@@ -1,5 +1,6 @@
 package com.example.cahier.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cahier.data.Note
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class NoteListViewModel(private val noteRepository: NotesRepository) : ViewModel() {
+class HomeScreenViewModel(private val noteRepository: NotesRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow<Note?>(null)
     val uiState: StateFlow<Note?> = _uiState
@@ -38,8 +39,9 @@ class NoteListViewModel(private val noteRepository: NotesRepository) : ViewModel
                 }
             }
         } catch (e: Exception) {
-            throw e
+            Log.e(TAG, "Error retrieving note: ${e.message}")
         }
+
     }
 
     fun addNote(callback: (id: Long) -> Unit): Long {
@@ -53,8 +55,10 @@ class NoteListViewModel(private val noteRepository: NotesRepository) : ViewModel
             }
             return newlyAddedId
         } catch (e: Exception) {
-            throw e
+            Log.e(TAG, "Error adding note: ${e.message}")
+            return -1
         }
+
     }
 
     fun deleteNote() {
@@ -63,17 +67,22 @@ class NoteListViewModel(private val noteRepository: NotesRepository) : ViewModel
                 noteRepository.deleteNote(_uiState.value!!)
             }
         } catch (e: Exception) {
-            throw e
+            Log.e(TAG, "Error deleting note: ${e.message}")
         }
     }
 
     private fun resetUiState() {
-        val newNote = Note(id = 0, title = "", text = "", image = null)
-        _uiState.value = newNote
+        try {
+            val newNote = Note(id = 0, title = "", text = "", image = null)
+            _uiState.value = newNote
+        } catch (e: Exception) {
+            Log.e(TAG, "Error resetting UI state: ${e.message}")
+        }
     }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
+        private const val TAG = "HomeScreenViewModel"
     }
 }
 
