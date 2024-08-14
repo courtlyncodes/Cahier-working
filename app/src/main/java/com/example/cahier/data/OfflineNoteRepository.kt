@@ -18,6 +18,7 @@ class OfflineNotesRepository(private val notesDao: NoteDao, private val drawingD
 
     override suspend fun updateNote(note: Note) = notesDao.updateNote(note)
 
+
     // Drawing functions
     // Ask Chris about these
     override suspend fun getDrawingsForNote(noteId: Long): Flow<List<Path>> {

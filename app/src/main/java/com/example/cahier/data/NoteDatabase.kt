@@ -10,6 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [Note::class, StylusDrawing::class], version = 3)
 @TypeConverters(Converters::class) /* Used a type converter to convert the Path object to a string and back*/
+
 abstract class NoteDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun drawingDao(): DrawingDao
@@ -25,6 +26,7 @@ abstract class NoteDatabase : RoomDatabase() {
                     NoteDatabase::class.java,
                     "note_database"
                 )
+
                     .createFromAsset("database/notes.db") /* This file is in the assets folder. Created from the terminal */
                     .addMigrations(MIGRATION_2_3) //** Had to migrate from version 2 to 3 to get the foreign key working */
                     .build()
@@ -33,6 +35,7 @@ abstract class NoteDatabase : RoomDatabase() {
                     }
             }
         }
+
         // Migration from version 2 to 3
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {

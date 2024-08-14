@@ -1,5 +1,6 @@
 package com.example.cahier.ui.viewmodels
 
+
 import android.util.Log
 import androidx.compose.ui.graphics.Path
 import androidx.lifecycle.SavedStateHandle
@@ -94,5 +95,15 @@ class CanvasScreenViewModel(
 
     companion object {
         private const val TAG = "CanvasScreenViewModel"
+    }
+
+    private fun loadExistingPaths(noteId: Long) {
+        viewModelScope.launch {
+            noteRepository.getDrawingsForNote(noteId).collect { drawings ->
+                _existingPaths.update {
+                    return@update  drawings
+                }
+            }
+        }
     }
 }

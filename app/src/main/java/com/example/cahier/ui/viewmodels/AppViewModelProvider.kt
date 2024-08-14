@@ -31,6 +31,11 @@ object AppViewModelProvider {
                 cahierApplication().container.notesRepository,
             )
         }
+        initializer {
+            StylusViewModel(
+                cahierApplication().container.notesRepository,
+            )
+        }
     }
 }
 

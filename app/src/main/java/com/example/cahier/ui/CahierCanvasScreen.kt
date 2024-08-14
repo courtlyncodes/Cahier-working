@@ -77,6 +77,7 @@ fun NoteCanvas(
                             stylusViewModel.processMotionEvent(it)
                             true // Consume the event
                         } else {
+
                             // If not a stylus event, text field should be visible so user can type in the note
                             isTextFieldVisible = true
                             false // Not a stylus event, let it pass through
@@ -137,6 +138,5 @@ fun NoteCanvas(
                 )
             }
         }
+       }
     }
-    }
-
